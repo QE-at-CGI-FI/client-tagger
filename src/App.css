@@ -31,7 +31,7 @@ input {
 
 /* ===== Sidebar ===== */
 .sidebar {
-  width: 240px;
+  width: 20%;
   flex-shrink: 0;
   background: #1a1a2e;
   color: #e2e8f0;
