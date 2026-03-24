@@ -227,6 +227,14 @@ export default function App() {
     }))
   }
 
+  function deleteTag(tag) {
+    setData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(t => t !== tag),
+      tagGroups: prev.tagGroups.map(g => ({ ...g, tags: g.tags.filter(t => t !== tag) })),
+    }))
+  }
+
   function moveTagToGroup(tag, groupId) {
     // groupId can be null to ungroup
     setData(prev => ({
@@ -269,6 +277,7 @@ export default function App() {
             onDelete={() => deleteGroup(group.id)}
             onUngroup={(tag) => moveTagToGroup(tag, null)}
             onAssignTag={(tag) => moveTagToGroup(tag, group.id)}
+            onDeleteTag={deleteTag}
           />
         ))}
 
@@ -278,8 +287,8 @@ export default function App() {
           tagCounts={tagCounts}
           filterTag={filterTag}
           onFilter={(tag) => setFilterTag(filterTag === tag ? null : tag)}
-          onAssign={(tag, groupId) => moveTagToGroup(tag, groupId)}
           onUngroup={(tag) => moveTagToGroup(tag, null)}
+          onDeleteTag={deleteTag}
         />
       </aside>
 
@@ -423,7 +432,7 @@ function NewGroupButton({ onCreate }) {
   )
 }
 
-function SidebarGroup({ group, tagCounts, filterTag, onFilterTag, onRename, onDelete, onUngroup, onAssignTag }) {
+function SidebarGroup({ group, tagCounts, filterTag, onFilterTag, onRename, onDelete, onUngroup, onAssignTag, onDeleteTag }) {
   const [editing, setEditing] = useState(false)
   const [nameValue, setNameValue] = useState(group.name)
   const [dragOver, setDragOver] = useState(false)
@@ -503,6 +512,15 @@ function SidebarGroup({ group, tagCounts, filterTag, onFilterTag, onRename, onDe
             <span className="tag-dot" style={{ background: group.color }} />
             <span className="tag-filter-name">{tag}</span>
             <span className="tag-filter-count">{tagCounts[tag] || 0}</span>
+            {(tagCounts[tag] || 0) === 0 && (
+              <button
+                className="sidebar-tag-delete-btn"
+                title="Delete tag"
+                onClick={(e) => { e.stopPropagation(); onDeleteTag(tag) }}
+              >
+                &#x1F5D1;
+              </button>
+            )}
             <button
               className="sidebar-tag-ungroup-btn"
               title="Remove from group"
@@ -521,7 +539,7 @@ function SidebarGroup({ group, tagCounts, filterTag, onFilterTag, onRename, onDe
   )
 }
 
-function UngroupedSection({ tags, tagGroups, tagCounts, filterTag, onFilter, onAssign, onUngroup }) {
+function UngroupedSection({ tags, tagGroups, tagCounts, filterTag, onFilter, onUngroup, onDeleteTag }) {
   const [dragOver, setDragOver] = useState(false)
 
   if (tags.length === 0 && tagGroups.length === 0) return null
@@ -554,6 +572,15 @@ function UngroupedSection({ tags, tagGroups, tagCounts, filterTag, onFilter, onA
               <span className="tag-dot" style={{ background: '#64748b' }} />
               <span className="tag-filter-name">{tag}</span>
               <span className="tag-filter-count">{tagCounts[tag] || 0}</span>
+              {(tagCounts[tag] || 0) === 0 && (
+                <button
+                  className="sidebar-tag-delete-btn"
+                  title="Delete tag"
+                  onClick={(e) => { e.stopPropagation(); onDeleteTag(tag) }}
+                >
+                  &#x1F5D1;
+                </button>
+              )}
             </button>
           </div>
         ))}
