@@ -281,6 +281,28 @@ input {
   opacity: 1;
 }
 
+.client-card.starred {
+  border-left: 3px solid #f59e0b;
+}
+
+.star-btn {
+  font-size: 16px;
+  color: #cbd5e1;
+  flex-shrink: 0;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.star-btn:hover {
+  color: #f59e0b;
+  transform: scale(1.2);
+}
+
+.star-btn-on {
+  color: #f59e0b;
+}
+
 .client-summary {
   display: flex;
   align-items: center;

@@ -112,12 +112,14 @@ export default function App() {
     }
   }
 
-  // Filtered client list
-  const visibleClients = clients.filter((c) => {
-    const matchesSearch = c.codename.toLowerCase().includes(search.toLowerCase())
-    const matchesTag = filterTag ? c.tags.includes(filterTag) : true
-    return matchesSearch && matchesTag
-  })
+  // Filtered client list, starred first
+  const visibleClients = clients
+    .filter((c) => {
+      const matchesSearch = c.codename.toLowerCase().includes(search.toLowerCase())
+      const matchesTag = filterTag ? c.tags.includes(filterTag) : true
+      return matchesSearch && matchesTag
+    })
+    .sort((a, b) => (b.starred ? 1 : 0) - (a.starred ? 1 : 0))
 
   function exportData() {
     const json = JSON.stringify(data, null, 2)
@@ -609,9 +611,16 @@ function ClientRow({
   const hasTags = client.tags.length > 0
 
   return (
-    <div className={`client-card ${isSelected ? 'selected' : ''} ${!hasTags ? 'no-tags' : ''}`}>
+    <div className={`client-card ${isSelected ? 'selected' : ''} ${!hasTags ? 'no-tags' : ''} ${client.starred ? 'starred' : ''}`}>
       <div className="client-summary" onClick={onSelect} role="button" tabIndex={0}
         onKeyDown={(e) => e.key === 'Enter' && onSelect()}>
+        <button
+          className={`star-btn ${client.starred ? 'star-btn-on' : ''}`}
+          title={client.starred ? 'Unstar' : 'Star'}
+          onClick={(e) => { e.stopPropagation(); onUpdateClient({ starred: !client.starred }) }}
+        >
+          {client.starred ? '★' : '☆'}
+        </button>
         <div className="client-summary-left">
           <span className="client-codename">{client.codename}</span>
           {showRealNames && client.actualName && (
